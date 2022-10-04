@@ -1,37 +1,54 @@
 name: CI
-
 on:
   push:
     branches: ["main"]
   pull_request:
     types: [opened, synchronized]
-
 jobs:
-  build:
-    name: Build & Test
+  setup:
+    name: Setup Working Cache
     runs-on: ubuntu-latest
-
     steps:
       - name: Check Out
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
-
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: 6.32.2
-        
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
           node-version: 16
           cache: 'pnpm'
-      
       - name: Install Dependencies
         run: pnpm install
-
-      - name: Build
-        run: pnpm build
-
-      - name: Test
-        run: pnpm test
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-primes
+  build:
+    name: Build App
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.32.2
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'pnpm'
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-primes
+      - name: Install Dependencies
+        run: pnpm install --offline
