@@ -1,0 +1,24 @@
+name: 'Setup'
+description: 'Setup the environment for running a task'
+inputs:
+  cache-key:
+    required: true
+    description: 'Key for cache to use when saving and restoring node_modules'
+runs:
+  using: 'composite'
+  steps:
+    - uses: pnpm/action-setup@v2.0.1
+      with:
+        version: 6.32.2
+    - name: Setup Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16
+        cache: 'pnpm'
+    - name: Cache node_modules
+      uses: actions/cache@v3
+      with:
+        path: node_modules
+        key: ${{ inputs.cache-key }}
+    - name: Link Dependencies
+      run: pnpm install --offline
