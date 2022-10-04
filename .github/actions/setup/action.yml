@@ -22,3 +22,4 @@ runs:
         key: ${{ inputs.cache-key }}
     - name: Link Dependencies
       run: pnpm install --offline
+      shell: bash
