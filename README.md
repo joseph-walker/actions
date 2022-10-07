@@ -1,4 +1,4 @@
-# Turborepo starter
+# Turborepo Starter
 
 This is an official pnpm starter turborepo.
 
