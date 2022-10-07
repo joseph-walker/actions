@@ -1,9 +1,5 @@
 name: 'Setup'
 description: 'Setup the environment for running a task'
-inputs:
-  cache-key:
-    required: true
-    description: 'Key for cache to use when saving and restoring node_modules'
 runs:
   using: 'composite'
   steps:
@@ -15,11 +11,13 @@ runs:
       with:
         node-version: 16
         cache: 'pnpm'
-    - name: Cache node_modules
+    - name: Link Dependencies
+      run: pnpm install --frozen-lockfile
+      shell: bash
+    - name: Pull down Turbo cache
       uses: actions/cache@v3
       with:
-        path: node_modules
-        key: ${{ inputs.cache-key }}
-    - name: Link Dependencies
-      run: pnpm install --offline
-      shell: bash
+        path: node_modules/.cache/.turbo
+        key: turbo-${{ runner.os }}-${{ github.run_id }}
+        restore-keys: |
+          turbo-${{ runner.os }}
